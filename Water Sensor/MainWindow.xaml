@@ -8,5 +8,6 @@
         Title="Water Sensor (--Turbidity)" Height="450" Width="800">
     <Grid>
         <TextBlock x:Name="Output" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8,8,0,0">Placeholder</TextBlock>
+        <Button Margin="8,109,-129,-101" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Connect"></Button>
     </Grid>
 </Window>
