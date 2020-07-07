@@ -6,6 +6,6 @@ namespace Water_Sensor
 {
     class Data
     {
-        public static int[] DataExample = new int[4] { 234, 334, 850, 360 };
+        public static int[] DataExample = new int[4] { 204, 334, 850, 360 };
     }
 }
