@@ -23,7 +23,6 @@ namespace Water_Sensor
         public MainWindow()
         {
             InitializeComponent();
-            Output.Text = "Hello world with light level " + Data.DataExample[0].ToString();
         }
     }
 }
