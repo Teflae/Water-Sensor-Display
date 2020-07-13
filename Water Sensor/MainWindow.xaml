@@ -7,7 +7,29 @@
         mc:Ignorable="d"
         Title="Water Sensor (--Turbidity)" Height="450" Width="800">
     <Grid>
-        <TextBlock x:Name="Output" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8,8,0,0">Placeholder</TextBlock>
-        <Button Margin="8,109,-129,-101" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Connect"></Button>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1" Grid.RowSpan="2">
+            <TextBlock Height="40" Width="200" Text="&lt;Submerged&gt;" FontSize="22" HorizontalAlignment="Left" Margin="0,0,2,4" Background="#FFFF5100"/>
+            <Canvas Height="200">
+                <TextBlock Width="200" Height="22" FontSize="18" Margin="2,2,2,2" Background="#FF51FF00">Turbidity</TextBlock>
+                <TextBlock Width="100" Height="22" Canvas.Top="24" FontSize="18" Margin="2,2,2,2" Background="#FF00FFA2">Ambient</TextBlock>
+                <TextBlock Width="100" Height="22" Text="&lt;50Lx&gt;" Canvas.Left="100" Canvas.Top="24" FontSize="18" Margin="2,2,2,2" Background="#FF000CFF"></TextBlock>
+                <TextBlock Width="100" Height="75" Canvas.Top="48" FontStretch="Normal" LineStackingStrategy="MaxHeight" Margin="2,2,2,2" Background="#FF7501FF">Passive (50Lx Cal.)</TextBlock>
+                <TextBlock Width="100" Height="75" Canvas.Top="123" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="2,2,2,2" Background="#FFFF005D">Active (55Lx Cal.)</TextBlock>
+                <TextBlock Width="100" Height="75" Canvas.Left="100" Canvas.Top="48" FontSize="36" Background="#FFF300FF" Margin="2,2,2,2">11.3%</TextBlock>
+                <TextBlock Width="100" Height="75" Canvas.Left="100" Canvas.Top="123" FontSize="24" Margin="2,2,2,2" Background="Red">80%/M</TextBlock>
+                <Grid Height="200" Width="333" Canvas.Left="200" Margin="2,2,2,2" Background="Black"/> 
+            </Canvas>
+        </StackPanel>
+        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,4,0,0">Connect</Button>
+        <TextBlock Grid.Row="1"/>
+        <TextBlock Height="40" Width="330" Text="&lt;Graph&gt;" FontSize="22" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1" Background="#FFF3FF00" Margin="2,0,0,4"/>
     </Grid>
 </Window>
