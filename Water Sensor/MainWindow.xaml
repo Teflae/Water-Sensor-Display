@@ -16,7 +16,17 @@
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="1" Grid.RowSpan="2">
-            <TextBlock Height="40" Width="200" Text="&lt;Submerged&gt;" FontSize="22" HorizontalAlignment="Left" Margin="0,0,2,4" Background="#FFFF5100"/>
+            <TextBlock Height="40" Width="200" Text="&lt;Submerged&gt;" FontSize="22" HorizontalAlignment="Left" Margin="0,0,2,4">
+                <TextBlock.Foreground>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveCaptionTextColorKey}}"/>
+                </TextBlock.Foreground>
+                <TextBlock.Background>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                </TextBlock.Background>
+                <TextBlock.OpacityMask>
+                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                </TextBlock.OpacityMask>
+            </TextBlock>
             <Canvas Height="200">
                 <TextBlock Width="200" Height="22" FontSize="18" Margin="2,2,2,2" Background="#FF51FF00">Turbidity</TextBlock>
                 <TextBlock Width="100" Height="22" Canvas.Top="24" FontSize="18" Margin="2,2,2,2" Background="#FF00FFA2">Ambient</TextBlock>
@@ -25,7 +35,7 @@
                 <TextBlock Width="100" Height="75" Canvas.Top="123" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="2,2,2,2" Background="#FFFF005D">Active (55Lx Cal.)</TextBlock>
                 <TextBlock Width="100" Height="75" Canvas.Left="100" Canvas.Top="48" FontSize="36" Background="#FFF300FF" Margin="2,2,2,2">11.3%</TextBlock>
                 <TextBlock Width="100" Height="75" Canvas.Left="100" Canvas.Top="123" FontSize="24" Margin="2,2,2,2" Background="Red">80%/M</TextBlock>
-                <Grid Height="200" Width="333" Canvas.Left="200" Margin="2,2,2,2" Background="Black"/> 
+                <DataGrid Canvas.Left="200" Height="196" Width="333" Canvas.Top="4" HorizontalAlignment="Right" VerticalAlignment="Top" AlternatingRowBackground="Black"/>
             </Canvas>
         </StackPanel>
         <Button HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,4,0,0">Connect</Button>
