@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Water_Sensor"
         mc:Ignorable="d"
-        Title="Water Sensor (--Turbidity)" Height="450" Width="800">
+        Title="Water Sensor (--Turbidity)" Height="436" Width="554">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
@@ -16,30 +16,47 @@
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="1" Grid.RowSpan="2">
-            <TextBlock Height="40" Width="200" Text="&lt;Submerged&gt;" FontSize="22" HorizontalAlignment="Left" Margin="0,0,2,4">
-                <TextBlock.Foreground>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveCaptionTextColorKey}}"/>
-                </TextBlock.Foreground>
-                <TextBlock.Background>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
-                </TextBlock.Background>
-                <TextBlock.OpacityMask>
-                    <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
-                </TextBlock.OpacityMask>
-            </TextBlock>
-            <Canvas Height="200">
-                <TextBlock Width="200" Height="22" FontSize="18" Margin="2,2,2,2" Background="#FF51FF00">Turbidity</TextBlock>
-                <TextBlock Width="100" Height="22" Canvas.Top="24" FontSize="18" Margin="2,2,2,2" Background="#FF00FFA2">Ambient</TextBlock>
-                <TextBlock Width="100" Height="22" Text="&lt;50Lx&gt;" Canvas.Left="100" Canvas.Top="24" FontSize="18" Margin="2,2,2,2" Background="#FF000CFF"></TextBlock>
-                <TextBlock Width="100" Height="75" Canvas.Top="48" FontStretch="Normal" LineStackingStrategy="MaxHeight" Margin="2,2,2,2" Background="#FF7501FF">Passive (50Lx Cal.)</TextBlock>
-                <TextBlock Width="100" Height="75" Canvas.Top="123" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="2,2,2,2" Background="#FFFF005D">Active (55Lx Cal.)</TextBlock>
-                <TextBlock Width="100" Height="75" Canvas.Left="100" Canvas.Top="48" FontSize="36" Background="#FFF300FF" Margin="2,2,2,2">11.3%</TextBlock>
-                <TextBlock Width="100" Height="75" Canvas.Left="100" Canvas.Top="123" FontSize="24" Margin="2,2,2,2" Background="Red">80%/M</TextBlock>
-                <DataGrid Canvas.Left="200" Height="196" Width="333" Canvas.Top="4" HorizontalAlignment="Right" VerticalAlignment="Top" AlternatingRowBackground="Black"/>
-            </Canvas>
+            <Grid x:Name="WaterSensorGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="16*"/>
+                    <ColumnDefinition Width="21*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="SubmergedIndicatorTextBlock" Text="&lt;Submerged&gt;" FontSize="22" HorizontalAlignment="Stretch" Margin="4,4,4,4" Grid.ColumnSpan="1">
+                    <TextBlock.Foreground>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveCaptionTextColorKey}}"/>
+                    </TextBlock.Foreground>
+                    <TextBlock.Background>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                    </TextBlock.Background>
+                    <TextBlock.OpacityMask>
+                        <SolidColorBrush Color="{DynamicResource {x:Static SystemColors.ActiveBorderColorKey}}"/>
+                    </TextBlock.OpacityMask>
+                </TextBlock>
+                <TextBlock x:Name="SubmergedGraph" Text="&lt;Graph&gt;" FontSize="22" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="#FFF3FF00" Grid.ColumnSpan="2" Grid.Column="1"/>
+            </Grid>
+            <Grid x:Name="TurbidityGrid" Height="200">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="81*"/>
+                    <ColumnDefinition Width="58*"/>
+                    <ColumnDefinition Width="231*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30*"/>
+                    <RowDefinition Height="32*"/>
+                    <RowDefinition Height="55*"/>
+                    <RowDefinition Height="83*"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="TurbidityLabelTextBlock" FontSize="18" Background="#FF51FF00" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">Turbidity</TextBlock>
+                <TextBlock x:Name="AmbientLabelTextBlock" FontSize="18" Background="#FF00FFA2" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1">Ambient</TextBlock>
+                <TextBlock x:Name="AmbientTextBlock" Text="&lt;50Lx&gt;" FontSize="18" Background="#FF000CFF" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1"/>
+                <TextBlock x:Name="PassiveLabelTextBlock" FontStretch="Normal" LineStackingStrategy="MaxHeight" Background="#FF7501FF" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="1" Grid.RowSpan="1">Passive (50Lx Cal.)</TextBlock>
+                <TextBlock x:Name="ActiveLabelTextBlock" Background="#FFFF005D" Grid.Row="3">Active (55Lx Cal.)</TextBlock>
+                <TextBlock x:Name="PassiveTextBlock" FontSize="36" Background="#FFF300FF" Grid.Row="2" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="1">11.3%</TextBlock>
+                <TextBlock x:Name="ActiveTextBlock" FontSize="24" Background="Red" Grid.Row="3" Grid.Column="1">80%/M</TextBlock>
+                <Canvas x:Name="TurbidityGraph" Grid.RowSpan="4" Grid.ColumnSpan="1" Grid.Column="2" Background="Yellow"/>
+            </Grid>
         </StackPanel>
-        <Button HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,4,0,0">Connect</Button>
-        <TextBlock Grid.Row="1"/>
-        <TextBlock Height="40" Width="330" Text="&lt;Graph&gt;" FontSize="22" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1" Background="#FFF3FF00" Margin="2,0,0,4"/>
+        <Button x:Name="ConnectButton" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="4,4,0,0">Connect</Button>
+        <TextBlock x:Name="OutputTextBlock" Grid.Row="1"/>
     </Grid>
 </Window>
