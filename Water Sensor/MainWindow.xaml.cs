@@ -20,9 +20,28 @@ namespace Water_Sensor
     /// </summary>
     public partial class MainWindow : Window
     {
+        Data Sensor;
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void ConnectButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Sensor = new Data();
+                OutputTextBlock.Text = "ready\n";
+            }
+            catch (Exception ex)
+            {
+                OutputTextBlock.Text += ex.Message + '\n';
+            }
+        }
+
+        private void TestButton_Click(object sender, RoutedEventArgs e)
+        {
+            OutputTextBlock.Text += Sensor.GetRawDataLine() + '\n';
         }
     }
 }

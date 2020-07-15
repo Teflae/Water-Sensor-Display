@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Compile Remove="Class1.cs" />
+    <PackageReference Include="System.IO.Ports" Version="4.5.1" />
   </ItemGroup>
 
 </Project>
