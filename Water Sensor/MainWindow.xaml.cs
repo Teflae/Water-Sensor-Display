@@ -66,6 +66,7 @@ namespace Water_Sensor
             yaxis_path.Data = yaxis_geom;
 
             TurbidityGraph.Children.Add(yaxis_path);
+
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
@@ -84,6 +85,34 @@ namespace Water_Sensor
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             OutputTextBlock.Text += Sensor.GetRawDataLine() + '\n';
+            const double margin = 10;
+            double xmin = margin;
+            double xmax = xmin + 30;
+            double ymax = TurbidityGraph.Height - margin;
+            double ymin = margin;
+            const double step = 30;
+            // Random until Algorith for data labels is finished other wise it is almost impossible for me to use the python data.
+            Brush brushes = Brushes.Red;
+            Random rand = new Random();
+            int last_y = rand.Next((int)ymin, (int)ymax);
+            PointCollection points = new PointCollection();
+            for (double x = xmin; x <= xmax; x += step)
+            {
+                last_y = rand.Next(last_y - 20, last_y + 20);
+                if (last_y < ymin) last_y = (int)ymin;
+                if (last_y > ymax) last_y = (int)ymax;
+                points.Add(new Point(x, last_y));
+            }
+
+            Polyline polyline = new Polyline();
+            polyline.StrokeThickness = 1;
+            polyline.Stroke = brushes;
+            polyline.Points = points;
+
+            TurbidityGraph.Children.Add(polyline);
+            xmin += 30;
         }
     }
+
 }
+
