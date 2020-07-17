@@ -20,8 +20,7 @@ namespace Water_Sensor
     /// </summary>
     public partial class MainWindow : Window
     {
-        Data Sensor;
-
+        private Data Sensor;
         public MainWindow()
         {
             InitializeComponent();
@@ -29,14 +28,21 @@ namespace Water_Sensor
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            SerialConnectionDialog Dialog = new SerialConnectionDialog();
+            Dialog.Owner = this;
+            bool IsAccepted = (bool)Dialog.ShowDialog();
+            if (IsAccepted)
             {
-                Sensor = new Data();
-                OutputTextBlock.Text = "ready\n";
-            }
-            catch (Exception ex)
-            {
-                OutputTextBlock.Text += ex.Message + '\n';
+                try
+                {
+                    Sensor.Connect(Dialog.Port, Dialog.BaudRate);
+                    OutputTextBlock.Text = "ready\n";
+                    Sensor.DataRecived += DataRecived;
+                }
+                catch (Exception ex)
+                {
+                    OutputTextBlock.Text += ex.Message + '\n';
+                }
             }
         }
 
