@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Water_Sensor"
         mc:Ignorable="d"
-        Title="Water Sensor (--Turbidity)" Height="436" Width="554">
+        Title="Water Sensor (--Turbidity)" Height="500" Width="800" WindowState="Normal" MinWidth="600" MinHeight="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>

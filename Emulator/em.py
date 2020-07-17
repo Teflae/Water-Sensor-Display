@@ -4,8 +4,8 @@ import time
 
 #Actual Vars
 i = 0
-Lz = 20
-Dz = 10
+Lz = 2
+Dz = 1000
 Lo = False
 
 #Simulation Vars
