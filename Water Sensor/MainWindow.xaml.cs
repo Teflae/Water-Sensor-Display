@@ -98,9 +98,6 @@ namespace Water_Sensor
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             OutputTextBlock.Text += Sensor.GetRawDataLine() + '\n';
-            int Change_graph_value = 30; 
-            Add_Data_Graph(Change_graph_value);           
-            Change_graph_value += 30;
         }
 
         public void Add_Data_Graph(int change_value)
