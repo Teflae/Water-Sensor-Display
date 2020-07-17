@@ -15,7 +15,7 @@ namespace Water_Sensor
         public bool IsRunning = true;
 
 
-        public Data(string Port = "COM1")
+        public Data()
         {
             Serial = new SerialPort();
         }

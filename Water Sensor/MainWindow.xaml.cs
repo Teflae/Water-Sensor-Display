@@ -24,7 +24,7 @@ namespace Water_Sensor
         public MainWindow()
         {
             InitializeComponent();
-            /*const double margin = 10;
+            const double margin = 10;
             double xmin = margin;
             double xmax = TurbidityGraph.Width - margin;
             double ymax = TurbidityGraph.Height - margin;
@@ -65,8 +65,9 @@ namespace Water_Sensor
             yaxis_path.Stroke = Brushes.Black;
             yaxis_path.Data = yaxis_geom;
 
-            TurbidityGraph.Children.Add(yaxis_path);*/
+            TurbidityGraph.Children.Add(yaxis_path);
 
+            Sensor = new Data();
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
@@ -89,15 +90,20 @@ namespace Water_Sensor
             }
         }
 
+        private void DataRecived(object sender, DataRecivedEventArgs e)
+        {
+            OutputTextBlock.Text += e.Output + '\n';
+        }
+
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             OutputTextBlock.Text += Sensor.GetRawDataLine() + '\n';
-            /*int Change_graph_value = 30; 
+            int Change_graph_value = 30; 
             Add_Data_Graph(Change_graph_value);           
-            Change_graph_value += 30;*/
+            Change_graph_value += 30;
         }
 
-        /*public void Add_Data_Graph(int change_value)
+        public void Add_Data_Graph(int change_value)
         {
             const double margin = 10;
             double xmin = margin;
@@ -125,7 +131,7 @@ namespace Water_Sensor
 
             TurbidityGraph.Children.Add(polyline);
 
-        }*/
+        }
     }
 
 }
