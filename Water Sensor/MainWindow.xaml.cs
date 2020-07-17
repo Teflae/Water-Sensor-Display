@@ -92,7 +92,10 @@ namespace Water_Sensor
 
         private void DataRecived(object sender, DataRecivedEventArgs e)
         {
-            OutputTextBlock.Text += e.Output + '\n';
+            this.Dispatcher.Invoke(() =>
+            {
+                OutputTextBlock.Text += e.Output;
+            });
         }
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
