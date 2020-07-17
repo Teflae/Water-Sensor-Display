@@ -21,6 +21,7 @@ namespace Water_Sensor
     public partial class MainWindow : Window
     {
         Data Sensor;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -85,9 +86,16 @@ namespace Water_Sensor
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             OutputTextBlock.Text += Sensor.GetRawDataLine() + '\n';
+            int Change_graph_value = 30; 
+            Add_Data_Graph(Change_graph_value);           
+            Change_graph_value += 30;
+        }
+
+        public void Add_Data_Graph(int change_value)
+        {
             const double margin = 10;
             double xmin = margin;
-            double xmax = xmin + 30;
+            double xmax = margin + change_value;
             double ymax = TurbidityGraph.Height - margin;
             double ymin = margin;
             const double step = 30;
@@ -110,7 +118,7 @@ namespace Water_Sensor
             polyline.Points = points;
 
             TurbidityGraph.Children.Add(polyline);
-            xmin += 30;
+
         }
     }
 
