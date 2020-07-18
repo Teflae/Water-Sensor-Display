@@ -21,9 +21,11 @@ namespace Water_Sensor
     public partial class MainWindow : Window
     {
         private Data Sensor;
+        private int Count = 0;
         public MainWindow()
         {
             InitializeComponent();
+
             const double margin = 10;
             double xmin = margin;
             double xmax = TurbidityGraph.Width - margin;
@@ -68,41 +70,58 @@ namespace Water_Sensor
             TurbidityGraph.Children.Add(yaxis_path);
 
             Sensor = new Data();
+            Sensor.DataRecived += DataRecived;
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
-            SerialConnectionDialog Dialog = new SerialConnectionDialog();
-            Dialog.Owner = this;
-            bool IsAccepted = (bool)Dialog.ShowDialog();
-            if (IsAccepted)
+            if (Sensor.IsConnected)
             {
-                try
+                Sensor.Disconnect();
+                ConnectButton.Content = "Connect";
+                OutputTextBlock.Text = "";
+            }
+            else
+            {
+                SerialConnectionDialog Dialog = new SerialConnectionDialog();
+                Dialog.Owner = this;
+                bool IsAccepted = (bool)Dialog.ShowDialog();
+                if (IsAccepted)
                 {
-                    Sensor.Connect(Dialog.Port, Dialog.BaudRate);
-                    OutputTextBlock.Text = "ready\n";
-                    Sensor.DataRecived += DataRecived;
-                }
-                catch (Exception ex)
-                {
-                    OutputTextBlock.Text += ex.Message + '\n';
+                    try
+                    {
+                        Sensor.Connect(Dialog.Port, Dialog.BaudRate);
+                        ConnectButton.Content = "Disconnect";
+                    }
+                    catch (Exception ex)
+                    {
+                        OutputTextBlock.Text += ex.Message + '\n';
+                    }
                 }
             }
         }
 
-        private void DataRecived(object sender, DataRecivedEventArgs e)
+        private void DataRecived(object sender, EventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
-                OutputTextBlock.Text += e.Output;
+                int l = Sensor.Dataset.Count;
+                for (int i = Count; i < l; i++)
+                {
+                    OutputTextBlock.Text = String.Format("{0}\t{1}\n{2}", Sensor.Dataset[i].Absorb, Sensor.Dataset[i].Diffuse, OutputTextBlock.Text);
+                    //OutputTextBlock.Text = String.Format("{0}\n{1}", Sensor.Dataset[i].RawString, OutputTextBlock.Text);
+                }
+                Count = l;
+                if (OutputTextBlock.Text.Length > 20000) OutputTextBlock.Text = OutputTextBlock.Text.Remove(20000);
+                StatusTextBlock.Text = Sensor.DataType;
             });
         }
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
             OutputTextBlock.Text += Sensor.GetRawDataLine() + '\n';
-            int Change_graph_value = 30; 
-            Add_Data_Graph(Change_graph_value);           
+            int Change_graph_value = 30;
+            Add_Data_Graph(Change_graph_value);
             Change_graph_value += 30;
         }
 

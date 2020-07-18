@@ -20,7 +20,7 @@ namespace Water_Sensor
             PortComboBox.SelectedIndex = 0;
             BaudRates = new int[15] { 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 74800, 115200, 230400, 250000, 500000, 1000000, 2000000 }.ToList();
             BaudRateComboBox.ItemsSource = BaudRates;
-            BaudRateComboBox.SelectedIndex = 4;
+            BaudRateComboBox.SelectedIndex = 6;
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
