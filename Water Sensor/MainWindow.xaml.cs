@@ -22,11 +22,11 @@ namespace Water_Sensor
     {
         private Data Sensor;
         private int Count = 0;
-        private List<double> Data_Storage = new List<double>();
+        private List<double> Diffuse_Data_Storage = new List<double>();
         public MainWindow()
         {
             InitializeComponent();
-            Draw_Graph();
+            Draw_Graph_Axis();
             Sensor = new Data();
             Sensor.DataRecived += DataRecived;
         }
@@ -67,38 +67,48 @@ namespace Water_Sensor
                 for (int i = Count; i < l; i++)
                 {
                     OutputTextBlock.Text = String.Format("{0}\t{1}\n{2}", Sensor.Dataset[i].Absorb, Sensor.Dataset[i].Diffuse, OutputTextBlock.Text);
-                    //OutputTextBlock.Text = String.Format("{0}\n{1}", Sensor.Dataset[i].RawString, OutputTextBlock.Text);
-                    Data_Storage.Add(Convert.ToDouble(Sensor.Dataset));
-                    if (Data_Storage.Count > 30) Data_Storage.RemoveAt(0);
+                    Diffuse_Data_Storage.Add(Convert.ToDouble(Sensor.Dataset[i].Diffuse / TurbidityDataset.DiffuseMaxRange));
+                    if (Diffuse_Data_Storage.Count > 30) Diffuse_Data_Storage.RemoveAt(0);
                 }
+                if(Count < l) DrawTurbidityGraph();
                 Count = l;
-                if (OutputTextBlock.Text.Length > 200) OutputTextBlock.Text = OutputTextBlock.Text.Remove(200);
+                if (OutputTextBlock.Text.Length > 700) OutputTextBlock.Text = OutputTextBlock.Text.Remove(700);
                 StatusTextBlock.Text = Sensor.DataType;
             });
+
+        }
+
+        private void TestButton_Click(object sender, RoutedEventArgs e)
+        {
+            OutputTextBlock.Text += Sensor.GetRawDataLine() + '\n';
+        }
+
+        private void DrawTurbidityGraph()
+        {
             // Make some data sets.
             const double margin = 10;
             double xmin = margin;
-            double xmax = Data_Storage.IndexOf(Convert.ToInt32(OutputTextBlock.Text)) * 10;
-            //Console.WriteLine(xmax);
+            double xmax = TurbidityGraph.Width - margin;
             double ymin = margin;
             double ymax = TurbidityGraph.Height - margin;
+            double yarea = TurbidityGraph.Height - 2 * margin;
+
             const double step = 10;
             Brush brushes = Brushes.Red;
-            Random rand = new Random();
             int Required_Index = 0;
-            double last_y = Data_Storage.ElementAt(0);
+            double y = Diffuse_Data_Storage.ElementAt(0);
             Polyline polyline = new Polyline();
             TurbidityGraph.Children.Clear();
             PointCollection points = new PointCollection();
-            Draw_Graph();
+            Draw_Graph_Axis();
             try
             {
                 for (double x = xmin; x <= xmax; x += step)
                 {
-                    last_y = Data_Storage.ElementAt(Required_Index);
-                    if (last_y < ymin) last_y = ymin;
-                    if (last_y > ymax) last_y = ymax;
-                    points.Add(new Point(x, last_y));
+                    y = Diffuse_Data_Storage[Required_Index] * yarea;
+                    if (y < ymin) y = ymin;
+                    if (y > ymax) y = ymax;
+                    points.Add(new Point(x, y));
                     Required_Index++;
                 }
             }
@@ -114,12 +124,7 @@ namespace Water_Sensor
             TurbidityGraph.Children.Add(polyline);
         }
 
-        private void TestButton_Click(object sender, RoutedEventArgs e)
-        {
-            OutputTextBlock.Text += Sensor.GetRawDataLine() + '\n';
-        }
-
-        private void Draw_Graph()
+        private void Draw_Graph_Axis()
         {
             const double margin = 10;
             double xmin = margin;
