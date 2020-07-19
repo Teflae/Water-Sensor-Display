@@ -55,8 +55,8 @@
                 <TextBlock x:Name="AmbientTextBlock" Text="&lt;50Lx&gt;" FontSize="16" Background="#FF000CFF" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1" Margin="2,2,2,2"/>
                 <TextBlock x:Name="PassiveLabelTextBlock" FontStretch="Normal" LineStackingStrategy="MaxHeight" Background="#FF7501FF" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="1" Grid.RowSpan="1" Margin="4,2,2,2" FontSize="9">Passive (50Lx Cal.)</TextBlock>
                 <TextBlock x:Name="ActiveLabelTextBlock" Background="#FFFF005D" Grid.Row="3" Margin="4,2,2,4" FontSize="10">Active (55Lx Cal.)</TextBlock>
-                <TextBlock x:Name="PassiveTextBlock" FontSize="20" Background="#FFF300FF" Grid.Row="2" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="1" Margin="2,2,2,2">11.3%</TextBlock>
-                <TextBlock x:Name="ActiveTextBlock" FontSize="16" Background="Red" Grid.Row="3" Grid.Column="1" Margin="2,2,2,4">80%/M</TextBlock>
+                <TextBlock x:Name="PassiveTextBlock" FontSize="24" Background="#FFF300FF" Grid.Row="2" Grid.RowSpan="1" Grid.Column="1" Grid.ColumnSpan="1" Margin="2,2,2,2"></TextBlock>
+                <TextBlock x:Name="ActiveTextBlock" FontSize="24" Background="Red" Grid.Row="3" Grid.Column="1" Margin="2,2,2,4" TextAlignment="Left" LineHeight="72"/>
                 <Canvas x:Name="TurbidityGraph" Grid.RowSpan="4" Grid.ColumnSpan="1" Grid.Column="2" Margin="2,2,4,4" Height="194" Width="224.583783783784"/>
             </Grid>
         </StackPanel>

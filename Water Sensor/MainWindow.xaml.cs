@@ -23,6 +23,7 @@ namespace Water_Sensor
         private Data Sensor;
         private int Count = 0;
         private List<double> Diffuse_Data_Storage = new List<double>();
+        private List<double> Absorb_Data_Storage = new List<double>();
         public MainWindow()
         {
             InitializeComponent();
@@ -69,6 +70,11 @@ namespace Water_Sensor
                     OutputTextBlock.Text = String.Format("{0}\t{1}\n{2}", Sensor.Dataset[i].Absorb, Sensor.Dataset[i].Diffuse, OutputTextBlock.Text);
                     Diffuse_Data_Storage.Add(Convert.ToDouble(Sensor.Dataset[i].Diffuse / TurbidityDataset.DiffuseMaxRange));
                     if (Diffuse_Data_Storage.Count > 30) Diffuse_Data_Storage.RemoveAt(0);
+
+                    Absorb_Data_Storage.Add(Convert.ToDouble(Sensor.Dataset[i].Absorb / TurbidityDataset.DiffuseMaxRange));
+                    if (Absorb_Data_Storage.Count > 30) Absorb_Data_Storage.RemoveAt(0);
+                    PassiveTextBlock.Text = Convert.ToString(Math.Round(Sensor.Dataset[i].Diffuse, 3));
+                    ActiveTextBlock.Text = Convert.ToString(Math.Round(Sensor.Dataset[i].Absorb, 3));
                 }
                 if(Count < l) DrawTurbidityGraph();
                 Count = l;
@@ -87,41 +93,66 @@ namespace Water_Sensor
         {
             // Make some data sets.
             const double margin = 10;
-            double xmin = margin;
-            double xmax = TurbidityGraph.Width - margin;
-            double ymin = margin;
-            double ymax = TurbidityGraph.Height - margin;
-            double yarea = TurbidityGraph.Height - 2 * margin;
+            double Diffuse_xmin = margin;
+            double Diffuse_xmax = TurbidityGraph.Width - margin;
+            double Diffuse_ymin = margin;
+            double Diffuse_ymax = TurbidityGraph.Height - margin;
+            double Diffuse_yarea = TurbidityGraph.Height - 2 * margin;
 
-            const double step = 10;
-            Brush brushes = Brushes.Red;
-            int Required_Index = 0;
-            double y = Diffuse_Data_Storage.ElementAt(0);
-            Polyline polyline = new Polyline();
+            const double Diffuse_step = 10;
+            double Absorb_xmin = margin;
+            double Absorb_xmax = TurbidityGraph.Width - margin;
+            double Absorb_ymin = margin;
+            double Absorb_ymax = TurbidityGraph.Height - margin;
+            double Absorb_yarea = TurbidityGraph.Height - 2 * margin;
+
+            const double Absorb_step = 10;
+            Brush Diffuse_brushes = Brushes.Red;
+            Brush Absorb_brushes = Brushes.Blue;
+            int Diffuse_Required_Index = 0;
+            int Absorb_Required_Index = 0;
+            double Diffuse_y = Diffuse_Data_Storage.ElementAt(0);
+            double Absorb_y = Absorb_Data_Storage.ElementAt(0);
+            Polyline Diffuse_polyline = new Polyline();
+            Polyline Absorb_polyline = new Polyline();
             TurbidityGraph.Children.Clear();
-            PointCollection points = new PointCollection();
+            PointCollection Diffuse_points = new PointCollection();
+            PointCollection Absorb_points = new PointCollection();
             Draw_Graph_Axis();
             try
             {
-                for (double x = xmin; x <= xmax; x += step)
+                for (double Diffuse_x = Diffuse_xmin; Diffuse_x <= Diffuse_xmax; Diffuse_x += Diffuse_step)
                 {
-                    y = Diffuse_Data_Storage[Required_Index] * yarea;
-                    if (y < ymin) y = ymin;
-                    if (y > ymax) y = ymax;
-                    points.Add(new Point(x, y));
-                    Required_Index++;
+                    Diffuse_y = Diffuse_Data_Storage[Diffuse_Required_Index] * Diffuse_yarea;
+                    if (Diffuse_y < Diffuse_ymin) Diffuse_y = Diffuse_ymin;
+                    if (Diffuse_y > Diffuse_ymax) Diffuse_y = Diffuse_ymax;
+                    Diffuse_points.Add(new Point(Diffuse_x, Diffuse_y));
+                    Diffuse_Required_Index++;
+                }
+                for (double Absorb_x = Absorb_xmin; Absorb_x <= Absorb_xmax; Absorb_x += Absorb_step)
+                {
+                    Absorb_y = Absorb_Data_Storage[Absorb_Required_Index] * Absorb_yarea;
+                    if (Absorb_y < Absorb_ymin) Absorb_y = Absorb_ymin;
+                    if (Absorb_y > Absorb_ymax) Absorb_y = Absorb_ymax;
+                    Absorb_points.Add(new Point(Absorb_x, Absorb_y));
+                    Absorb_Required_Index++;
                 }
             }
             catch (Exception)
             {
-                Console.WriteLine("Error: Unable to Access index of " + Required_Index);
+                Console.WriteLine("Error: Unable to Access index of " + Absorb_Required_Index);
             }
 
-            polyline.StrokeThickness = 2;
-            polyline.Stroke = brushes;
-            polyline.Points = points;
+            Diffuse_polyline.StrokeThickness = 2;
+            Diffuse_polyline.Stroke = Diffuse_brushes;
+            Diffuse_polyline.Points = Diffuse_points;
 
-            TurbidityGraph.Children.Add(polyline);
+            TurbidityGraph.Children.Add(Diffuse_polyline);
+            Absorb_polyline.StrokeThickness = 2;
+            Absorb_polyline.Stroke = Absorb_brushes;
+            Absorb_polyline.Points = Absorb_points;
+
+            TurbidityGraph.Children.Add(Absorb_polyline);
         }
 
         private void Draw_Graph_Axis()
