@@ -24,6 +24,7 @@ namespace Water_Sensor
         private int Count = 0;
         private List<double> Diffuse_Data_Storage = new List<double>();
         private List<double> Absorb_Data_Storage = new List<double>();
+        private int TurbidityGraphDataLength = 64;
         public MainWindow()
         {
             InitializeComponent();
@@ -31,7 +32,7 @@ namespace Water_Sensor
             Sensor = new Data();
             Sensor.DataRecived += DataRecived;
         }
- 
+
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
         {
             if (Sensor.IsConnected)
@@ -69,14 +70,17 @@ namespace Water_Sensor
                 {
                     OutputTextBlock.Text = String.Format("{0}\t{1}\n{2}", Sensor.Dataset[i].Absorb, Sensor.Dataset[i].Diffuse, OutputTextBlock.Text);
                     Diffuse_Data_Storage.Add(Convert.ToDouble(Sensor.Dataset[i].Diffuse / TurbidityDataset.DiffuseMaxRange));
-                    if (Diffuse_Data_Storage.Count > 30) Diffuse_Data_Storage.RemoveAt(0);
-
-                    Absorb_Data_Storage.Add(Convert.ToDouble(Sensor.Dataset[i].Absorb / TurbidityDataset.DiffuseMaxRange));
-                    if (Absorb_Data_Storage.Count > 30) Absorb_Data_Storage.RemoveAt(0);
-                    PassiveTextBlock.Text = Convert.ToString(Math.Round(Sensor.Dataset[i].Diffuse, 3));
-                    ActiveTextBlock.Text = Convert.ToString(Math.Round(Sensor.Dataset[i].Absorb, 3));
+                    Absorb_Data_Storage.Add(Convert.ToDouble(Sensor.Dataset[i].Absorb / TurbidityDataset.AbsorbMaxRange));
+                    if (Diffuse_Data_Storage.Count > TurbidityGraphDataLength)
+                    {
+                        Diffuse_Data_Storage.RemoveAt(0);
+                        Absorb_Data_Storage.RemoveAt(0);
+                    };
+                    PassiveTextBlock.Text = Math.Round(Sensor.Dataset[i].Diffuse, 3).ToString();
+                    ActiveTextBlock.Text = Math.Round(Sensor.Dataset[i].Absorb, 3).ToString();
+                    AmbientTextBlock.Text = Math.Round(Sensor.Dataset[i].Ambient, 3).ToString();
                 }
-                if(Count < l) DrawTurbidityGraph();
+                if (Count < l) DrawTurbidityGraph();
                 Count = l;
                 if (OutputTextBlock.Text.Length > 700) OutputTextBlock.Text = OutputTextBlock.Text.Remove(700);
                 StatusTextBlock.Text = Sensor.DataType;
@@ -91,65 +95,48 @@ namespace Water_Sensor
 
         private void DrawTurbidityGraph()
         {
-            // Make some data sets.
+            // Pre-calculate margins and chart area for preformance
             const double margin = 10;
-            double Diffuse_xmin = margin;
-            double Diffuse_xmax = TurbidityGraph.Width - margin;
-            double Diffuse_ymin = margin;
-            double Diffuse_ymax = TurbidityGraph.Height - margin;
-            double Diffuse_yarea = TurbidityGraph.Height - 2 * margin;
+            double xmin = margin;
+            double xmax = TurbidityGraph.Width - margin;
+            double xarea = TurbidityGraph.Width - 2 * margin;
+            double ymin = margin;
+            double ymax = TurbidityGraph.Height - margin;
+            double yarea = TurbidityGraph.Height - 2 * margin;
 
-            const double Diffuse_step = 10;
-            double Absorb_xmin = margin;
-            double Absorb_xmax = TurbidityGraph.Width - margin;
-            double Absorb_ymin = margin;
-            double Absorb_ymax = TurbidityGraph.Height - margin;
-            double Absorb_yarea = TurbidityGraph.Height - 2 * margin;
-
-            const double Absorb_step = 10;
-            Brush Diffuse_brushes = Brushes.Red;
-            Brush Absorb_brushes = Brushes.Blue;
-            int Diffuse_Required_Index = 0;
-            int Absorb_Required_Index = 0;
-            double Diffuse_y = Diffuse_Data_Storage.ElementAt(0);
-            double Absorb_y = Absorb_Data_Storage.ElementAt(0);
+            double step = xarea / TurbidityGraphDataLength;
+            Brush DiffuseColour = Brushes.Red;
+            Brush AbsorbColour = Brushes.Blue;
+            //int i = 0;
+            double x = xmin;
             Polyline Diffuse_polyline = new Polyline();
             Polyline Absorb_polyline = new Polyline();
             TurbidityGraph.Children.Clear();
             PointCollection Diffuse_points = new PointCollection();
             PointCollection Absorb_points = new PointCollection();
             Draw_Graph_Axis();
-            try
+
+            int length = Diffuse_Data_Storage.Count;
+            for (int i = 0; i < length; i++)
             {
-                for (double Diffuse_x = Diffuse_xmin; Diffuse_x <= Diffuse_xmax; Diffuse_x += Diffuse_step)
-                {
-                    Diffuse_y = Diffuse_Data_Storage[Diffuse_Required_Index] * Diffuse_yarea;
-                    if (Diffuse_y < Diffuse_ymin) Diffuse_y = Diffuse_ymin;
-                    if (Diffuse_y > Diffuse_ymax) Diffuse_y = Diffuse_ymax;
-                    Diffuse_points.Add(new Point(Diffuse_x, Diffuse_y));
-                    Diffuse_Required_Index++;
-                }
-                for (double Absorb_x = Absorb_xmin; Absorb_x <= Absorb_xmax; Absorb_x += Absorb_step)
-                {
-                    Absorb_y = Absorb_Data_Storage[Absorb_Required_Index] * Absorb_yarea;
-                    if (Absorb_y < Absorb_ymin) Absorb_y = Absorb_ymin;
-                    if (Absorb_y > Absorb_ymax) Absorb_y = Absorb_ymax;
-                    Absorb_points.Add(new Point(Absorb_x, Absorb_y));
-                    Absorb_Required_Index++;
-                }
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Error: Unable to Access index of " + Absorb_Required_Index);
+                double Diffuse_y = yarea - Diffuse_Data_Storage[i] * yarea;
+                double Absorb_y = yarea - Absorb_Data_Storage[i] * yarea;
+                if (Diffuse_y < ymin) Diffuse_y = ymin;
+                if (Diffuse_y > ymax) Diffuse_y = ymax;
+                Diffuse_points.Add(new Point(x, Diffuse_y));
+                if (Absorb_y < ymin) Absorb_y = ymin;
+                if (Absorb_y > ymax) Absorb_y = ymax;
+                Absorb_points.Add(new Point(x, Absorb_y));
+                x += step;
             }
 
             Diffuse_polyline.StrokeThickness = 2;
-            Diffuse_polyline.Stroke = Diffuse_brushes;
+            Diffuse_polyline.Stroke = DiffuseColour;
             Diffuse_polyline.Points = Diffuse_points;
 
             TurbidityGraph.Children.Add(Diffuse_polyline);
             Absorb_polyline.StrokeThickness = 2;
-            Absorb_polyline.Stroke = Absorb_brushes;
+            Absorb_polyline.Stroke = AbsorbColour;
             Absorb_polyline.Points = Absorb_points;
 
             TurbidityGraph.Children.Add(Absorb_polyline);

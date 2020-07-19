@@ -5,7 +5,8 @@ namespace Water_Sensor
     class TurbidityDataset
     {
         //Static constants, for reference
-        public static double DiffuseMaxRange = 20;
+        public static double DiffuseMaxRange = 25;
+        public static double AbsorbMaxRange = 10;
 
         //Data
         public string RawString;
@@ -20,7 +21,10 @@ namespace Water_Sensor
         // To account for ambient light:
         //   'Control' values are taken when the laser is off.
         //   'Laser' values taken when the laser is on. 
-        public double ControlAbsorb, ControlDiffuse, LaserAbsorb, LaserDiffuse, Absorb, Diffuse;
+        public double ControlAbsorb, ControlDiffuse, LaserAbsorb, LaserDiffuse;
+
+        // Data returned from calculations:
+        public double Ambient, Absorb, Diffuse;
         public TurbidityDataset(string raw, string[] spl)
         {
             //Save Raw Format for Debugging
@@ -70,6 +74,9 @@ namespace Water_Sensor
             ControlDiffuse = TurValueToLux(cd);
             LaserAbsorb = TurValueToLux(la);
             LaserDiffuse = TurValueToLux(ld);
+
+            //Ambient Light
+            Ambient = (ControlAbsorb + ControlDiffuse) / 2;
 
             //Ambient Light Subtraction
             Absorb = LaserAbsorb - ControlAbsorb;
