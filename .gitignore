@@ -348,3 +348,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/Emulator/cd this.lnk
+/Water Sensor/DataRecivedEventArgs.cs
+/Water Sensor/MessageRecivedEventArgs.cs
+/Arduino/TurbiditySensor/TurbiditySensor.ino

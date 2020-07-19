@@ -4,9 +4,14 @@ namespace Water_Sensor
 {
     class TurbidityDataset
     {
+        //Static constants, for reference
+        public static double DiffuseMaxRange = 20;
+
+        //Data
         public string RawString;
         public int[] RawData;
         public int TimeStamp;
+
         // To get the entire picture around turbidity:
         //   'Absorb' values are from the sensor directly pointed by the laser,
         //            measuring the absorption of light by the water (how black it is).
