@@ -96,8 +96,8 @@ namespace Water_Sensor
                 for (double x = xmin; x <= xmax; x += step)
                 {
                     last_y = Data_Storage.ElementAt(Required_Index);
-                    if (last_y < ymin) last_y = (int)ymin;
-                    if (last_y > ymax) last_y = (int)ymax;
+                    if (last_y < ymin) last_y = ymin;
+                    if (last_y > ymax) last_y = ymax;
                     points.Add(new Point(x, last_y));
                     Required_Index++;
                 }
