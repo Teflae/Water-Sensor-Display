@@ -5,9 +5,15 @@ namespace Water_Sensor
     class TurbidityDataset
     {
         //Static constants, for reference
-        public static double DiffuseMaxRange = 25;
-        public static double AbsorbMaxRange = 10;
+        public static double MaxRange = 20;
 
+        // Conversion constants
+        //   Convert arduino values to voltages
+        private static double AnalogueToDigitalScale = 5.0 / 1023.0; 
+        //   Formula to convert resistance of LDR to Lux is 7,000,000x^-1.233
+        public static double multiple = 7000000.0;
+        public static double power = -1.233;
+        public static double LaserMax;
         //Data
         public string RawString;
         public int[] RawData;
@@ -24,7 +30,7 @@ namespace Water_Sensor
         public double ControlAbsorb, ControlDiffuse, LaserAbsorb, LaserDiffuse;
 
         // Data returned from calculations:
-        public double Ambient, Absorb, Diffuse;
+        public double Ambient, Absorb, Diffuse, Absorption, AbsorptionPerMeter, Diffusion;
         public TurbidityDataset(string raw, string[] spl)
         {
             //Save Raw Format for Debugging
@@ -37,7 +43,6 @@ namespace Water_Sensor
             for (int i = 0; i < length - 1; i++)
             {
                 RawData[i] = Convert.ToInt32(StrData[i]);
-                i++;
             }
 
             //Set TimeStamp to beginning of measurements
@@ -81,19 +86,20 @@ namespace Water_Sensor
             //Ambient Light Subtraction
             Absorb = LaserAbsorb - ControlAbsorb;
             Diffuse = LaserDiffuse - ControlDiffuse;
+
+            // Comparison with calibrated values to convert to percentages:
+            // AbsorptionPerMeter = 1 - Math.Pow(Absorb / LaserMax, 10);
+            Absorption = 1 - Absorb / LaserMax;
+            Diffusion = LaserDiffuse / LaserMax;
         }
         // Function to convert arduino analog readings from log, allowing data to be converted to Lux approximation. 
-
-        private static double AnalogueToDigitalScale = 5.0 / 1023.0;
-        public static double x = 12000000.0;
-        public static double b = -1.4;
 
         private static double TurValueToLux(int Analogue)
         {
             double RVoltage = Analogue * AnalogueToDigitalScale;
             double LDRVoltage = 5 - RVoltage;
             double LDRResistance = LDRVoltage / RVoltage * 10000;
-            return x * Math.Pow(LDRResistance, b);
+            return multiple * Math.Pow(LDRResistance, power);
         }
     }
 }

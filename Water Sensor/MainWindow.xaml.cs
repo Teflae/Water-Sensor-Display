@@ -24,7 +24,7 @@ namespace Water_Sensor
         private int Count = 0;
         private List<double> Diffuse_Data_Storage = new List<double>();
         private List<double> Absorb_Data_Storage = new List<double>();
-        private int TurbidityGraphDataLength = 64;
+        private int TurbidityGraphDataLength = 100;
         public MainWindow()
         {
             InitializeComponent();
@@ -68,17 +68,21 @@ namespace Water_Sensor
                 int l = Sensor.Dataset.Count;
                 for (int i = Count; i < l; i++)
                 {
-                    OutputTextBlock.Text = String.Format("{0}\t{1}\n{2}", Sensor.Dataset[i].Absorb, Sensor.Dataset[i].Diffuse, OutputTextBlock.Text);
-                    Diffuse_Data_Storage.Add(Convert.ToDouble(Sensor.Dataset[i].Diffuse / TurbidityDataset.DiffuseMaxRange));
-                    Absorb_Data_Storage.Add(Convert.ToDouble(Sensor.Dataset[i].Absorb / TurbidityDataset.AbsorbMaxRange));
+                    //OutputTextBlock.Text = String.Format("{0}\t{1}\n{2}", Sensor.Dataset[i].Absorb, Sensor.Dataset[i].Diffuse, OutputTextBlock.Text); For Debugging Purposes
+                    Diffuse_Data_Storage.Add(Convert.ToDouble(Sensor.Dataset[i].Diffusion));
+                    Absorb_Data_Storage.Add(Convert.ToDouble(Sensor.Dataset[i].Absorption));
                     if (Diffuse_Data_Storage.Count > TurbidityGraphDataLength)
                     {
                         Diffuse_Data_Storage.RemoveAt(0);
                         Absorb_Data_Storage.RemoveAt(0);
                     };
-                    PassiveTextBlock.Text = Math.Round(Sensor.Dataset[i].Diffuse, 3).ToString();
-                    ActiveTextBlock.Text = Math.Round(Sensor.Dataset[i].Absorb, 3).ToString();
-                    AmbientTextBlock.Text = Math.Round(Sensor.Dataset[i].Ambient, 3).ToString();
+                    PassiveTextBlock.Text = String.Format("({0:0.000})", Sensor.Dataset[i].Diffuse);
+                    ActiveTextBlock.Text = String.Format("({0:0.000})", Sensor.Dataset[i].Absorb);
+
+                    AmbientTextBlock.Text = String.Format("({0:0.000})", Sensor.Dataset[i].Ambient);
+
+                    AbsorbtionTextBlock.Text = String.Format("{0:0.0%}", Sensor.Dataset[i].Absorption);
+                    DiffusionTextBlock.Text = String.Format("{0:0.0%}", Sensor.Dataset[i].Diffusion);
                 }
                 if (Count < l) DrawTurbidityGraph();
                 Count = l;
@@ -90,19 +94,18 @@ namespace Water_Sensor
 
         private void TestButton_Click(object sender, RoutedEventArgs e)
         {
-            OutputTextBlock.Text += Sensor.GetRawDataLine() + '\n';
         }
 
         private void DrawTurbidityGraph()
         {
             // Pre-calculate margins and chart area for preformance
-            const double margin = 10;
+            double margin = 10;
             double xmin = margin;
-            double xmax = TurbidityGraph.Width - margin;
-            double xarea = TurbidityGraph.Width - 2 * margin;
+            double xmax = TurbidityGraph.ActualWidth - margin;
+            double xarea = TurbidityGraph.ActualWidth - 2 * margin;
             double ymin = margin;
-            double ymax = TurbidityGraph.Height - margin;
-            double yarea = TurbidityGraph.Height - 2 * margin;
+            double ymax = TurbidityGraph.ActualHeight - margin;
+            double yarea = TurbidityGraph.ActualHeight - 2 * margin;
 
             double step = xarea / TurbidityGraphDataLength;
             Brush DiffuseColour = Brushes.Red;
@@ -144,48 +147,79 @@ namespace Water_Sensor
 
         private void Draw_Graph_Axis()
         {
-            const double margin = 10;
+            double margin = 10;
             double xmin = margin;
-            double xmax = TurbidityGraph.Width - margin;
-            double ymax = TurbidityGraph.Height - margin;
-            const double step = 10;
+            double xmax = TurbidityGraph.ActualWidth - margin;
+            double xarea = TurbidityGraph.ActualWidth - 2 * margin;
+            double ymin = margin;
+            double ymax = TurbidityGraph.ActualHeight - margin;
+            double yarea = TurbidityGraph.ActualHeight - 2 * margin;
+            double xstep = xarea / 10;
+            double ystep = yarea / 10;
 
-            // Make the X axis.
-            GeometryGroup xaxis_geom = new GeometryGroup();
-            xaxis_geom.Children.Add(new LineGeometry(
-                new Point(0, ymax), new Point(TurbidityGraph.Width, ymax)));
-            for (double x = xmin + step;
-                x <= TurbidityGraph.Width - step; x += step)
+            //Make the axis
+            GeometryGroup axis_geom = new GeometryGroup();
+            axis_geom.Children.Add(new LineGeometry(
+                new Point(xmin, ymax), new Point(xmax, ymax)));
+            axis_geom.Children.Add(new LineGeometry(
+                new Point(xmin, ymax), new Point(xmin, ymin)));
+
+            Path axis_path = new Path();
+            axis_path.StrokeThickness = 1;
+            axis_path.Stroke = Brushes.Black;
+            axis_path.Data = axis_geom;
+
+            TurbidityGraph.Children.Add(axis_path);
+
+            // Make the horizontal grid.
+            GeometryGroup xgrid_geom = new GeometryGroup();
+            for (double x = xmin + xstep; x <= xarea; x += xstep)
             {
-                xaxis_geom.Children.Add(new LineGeometry(
-                    new Point(x, ymax - margin / 2),
-                    new Point(x, ymax + margin / 2)));
+                xgrid_geom.Children.Add(new LineGeometry(
+                    new Point(x, ymin),
+                    new Point(x, ymax)));
             }
 
-            Path xaxis_path = new Path();
-            xaxis_path.StrokeThickness = 1;
-            xaxis_path.Stroke = Brushes.Black;
-            xaxis_path.Data = xaxis_geom;
+            Path xgrid_path = new Path();
+            xgrid_path.StrokeThickness = 1;
+            xgrid_path.Stroke = Brushes.Gray;
+            xgrid_path.Data = xgrid_geom;
 
-            TurbidityGraph.Children.Add(xaxis_path);
+            TurbidityGraph.Children.Add(xgrid_path);
 
-            // Make the Y ayis.
-            GeometryGroup yaxis_geom = new GeometryGroup();
-            yaxis_geom.Children.Add(new LineGeometry(
-                new Point(xmin, 0), new Point(xmin, TurbidityGraph.Height)));
-            for (double y = step; y <= TurbidityGraph.Height - step; y += step)
+            // Make the vertical grid.
+            GeometryGroup ygrid_geom = new GeometryGroup();
+            for (double y = ymin + ystep; y <= yarea; y += ystep)
             {
-                yaxis_geom.Children.Add(new LineGeometry(
-                    new Point(xmin - margin / 2, y),
-                    new Point(xmin + margin / 2, y)));
+                ygrid_geom.Children.Add(new LineGeometry(
+                    new Point(xmin, y),
+                    new Point(xmax, y)));
             }
 
-            Path yaxis_path = new Path();
-            yaxis_path.StrokeThickness = 1;
-            yaxis_path.Stroke = Brushes.Black;
-            yaxis_path.Data = yaxis_geom;
+            Path ygrid_path = new Path();
+            ygrid_path.StrokeThickness = 1;
+            ygrid_path.Stroke = Brushes.Gray;
+            ygrid_path.Data = ygrid_geom;
 
-            TurbidityGraph.Children.Add(yaxis_path);
+            TurbidityGraph.Children.Add(ygrid_path);
+        }
+
+        private void LaserMaxTuningTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                double lmt = Convert.ToDouble(LaserMaxTuningTextBox.Text);
+                if (lmt > 100 && lmt < 100000)
+                {
+                    TurbidityDataset.LaserMax = lmt;
+                }
+            }
+            catch (Exception) {}
+        }
+
+        private void TurbidityGraph_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DrawTurbidityGraph();
         }
     }
 
