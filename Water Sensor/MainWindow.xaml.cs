@@ -1,16 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Water_Sensor
@@ -110,7 +102,6 @@ namespace Water_Sensor
             double step = xarea / TurbidityGraphDataLength;
             Brush DiffuseColour = Brushes.Red;
             Brush AbsorbColour = Brushes.Blue;
-            //int i = 0;
             double x = xmin;
             Polyline Diffuse_polyline = new Polyline();
             Polyline Absorb_polyline = new Polyline();
@@ -214,7 +205,7 @@ namespace Water_Sensor
                     TurbidityDataset.LaserMax = lmt;
                 }
             }
-            catch (Exception) {}
+            catch (Exception) { }
         }
 
         private void TurbidityGraph_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -222,6 +213,4 @@ namespace Water_Sensor
             DrawTurbidityGraph();
         }
     }
-
 }
-
