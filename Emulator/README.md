@@ -1,0 +1,1 @@
+We are still working on the emulator. You can download em.py, download python, install pyserial, install a virtual null modem cable and then run em.py from command line, however em.py is not accurate.
